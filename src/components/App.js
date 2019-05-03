@@ -1,11 +1,13 @@
 import React from "react";
-import countries from "../data/countries"
+import countries from "../data/countries";
+
+// "Must be 5 characters or more"
+// "Required"
+// "Must be equal password"
 
 export default class App extends React.Component {
-
   constructor() {
-    super()
-
+    super();
     this.state = {
       username: "",
       password: "",
@@ -13,38 +15,66 @@ export default class App extends React.Component {
       country: "1",
       gender: "male",
       agree: true,
-      avatar: ""
+      avatar: "",
+      errors: {
+        username: false,
+        password: false,
+        repeatPassword: false
+      }
     };
   }
 
   onChange = event => {
-    
     this.setState({
       [event.target.name]: event.target.value
     });
   };
-
   onChangeAgree = event => {
     console.log(event.target.name, event.target.value, event.target.checked);
+    console.log(typeof event.target.value);
     this.setState({
-    [event.target.name]: event.target.checked
-    // или [event.target.name]: event.target.value == "true" ? false : true
-     });
+      [event.target.name]: event.target.checked
+      // [event.target.name]: !event.target.value not working
+      // [event.target.name]: event.target.value == "true" ? false : true
+    });
   };
-
   onChangeAvatar = event => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = event => {
       this.setState({
         avatar: event.target.result
       });
-         };
-    reader.readAsDataURL(event.target.files[0]);
     };
-
+    reader.readAsDataURL(event.target.files[0]);
+  };
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.username.value, this.password.value, this.target.value );
+    // console.log("refs", this.username.value, this.password.value);
+    console.log("submit", this.state);
+    const errors = {};
+    if (this.state.username.length < 5) {
+      errors.username = "Must be 5 characters or more";
+    }
+
+    if (this.state.password < 3) {
+      errors.password = "Must be 3 characters or more";
+    }
+
+    if (this.state.password !== this.state.repeatPassword) {
+      errors.repeatPassword = "Must be equal password";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      // error
+      this.setState({
+        errors: errors
+      });
+    } else {
+      this.setState({
+        errors: {}
+      });
+      console.log("submit", this.state);
+    }
   };
 
   getOptionsItems = items => {
@@ -54,9 +84,14 @@ export default class App extends React.Component {
       </option>
     ));
   };
-
   render() {
-
+    // console.log(this);
+    // const getOptionsCountries = countries.map(country => (
+    //   <option key={country.id} value={country.id}>
+    //     {country.name}
+    //   </option>
+    // ));
+    // console.log("getOptionsCountries", getOptionsCountries);
     return (
       <div className="form-container card">
         <form className="form card-body">
@@ -71,6 +106,11 @@ export default class App extends React.Component {
               value={this.state.username}
               onChange={this.onChange}
             />
+            {this.state.errors.username ? (
+              <div className="invalid-feedback">
+                {this.state.errors.username}
+              </div>
+            ) : null}
           </div>
           <div className="form-group">
             <label>Password</label>
@@ -83,6 +123,11 @@ export default class App extends React.Component {
               value={this.state.password}
               onChange={this.onChange}
             />
+            {this.state.errors.password ? (
+              <div className="invalid-feedback">
+                {this.state.errors.password}
+              </div>
+            ) : null}
           </div>
           <div className="form-group">
             <label>Repeat password</label>
@@ -95,10 +140,16 @@ export default class App extends React.Component {
               value={this.state.repeatPassword}
               onChange={this.onChange}
             />
+            {this.state.errors.repeatPassword ? (
+              <div className="invalid-feedback">
+                {this.state.errors.repeatPassword}
+              </div>
+            ) : null}
           </div>
           <div className="form-group">
-            <label htmlFor="exampleFormControlSelect1">Country</label>
-            <select className="form-control"
+            <label htmlFor="country">Country</label>
+            <select
+              className="form-control"
               id="country"
               name="country"
               value={this.state.country}
@@ -119,9 +170,9 @@ export default class App extends React.Component {
                 checked={this.state.gender === "male"}
                 onChange={this.onChange}
               />
-              <label className="form-ceck-label" htmlFor="male">
+              <label className="form-check-label" htmlFor="male">
                 Male
-          </label>
+              </label>
             </div>
             <div className="form-check">
               <input
@@ -133,46 +184,44 @@ export default class App extends React.Component {
                 checked={this.state.gender === "female"}
                 onChange={this.onChange}
               />
-              <label className="form-ceck-label" htmlFor="female">
+              <label className="form-check-label" htmlFor="female">
                 Female
               </label>
             </div>
           </fieldset>
-
           <div className="form-group">
             <label htmlFor="avatar">Avatar</label>
-            <input 
-            type="file"
-            className="form-control-file"
-            id="avatar" 
-            name="avatar"
-            onChange={this.onChangeAvatar}
+            <input
+              type="file"
+              className="form-control-file"
+              id="avatar"
+              name="avatar"
+              onChange={this.onChangeAvatar}
             />
           </div>
-
           <div className="form-check mb-2">
-            <input 
-            className="form-check-input" 
-            type="checkbox"
-             id="agree" 
-             name="agree"
-             value={this.state.agree}
-             onChange={this.onChangeAgree}
-             checked={this.state.agree === true}
-             />
-              <label className="form-check-label" 
-              htmlFor="inlineCheckbox1">
-              Agree
-              </label>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="agree"
+              name="agree"
+              value={this.state.agree}
+              onChange={this.onChangeAgree}
+              checked={this.state.agree}
+            />
+            <label className="form-check-label" htmlFor="agree">
+              Confirm the processing of data
+            </label>
           </div>
-
-            <button type="submit"
-              className="btn btn-primary w-100"
-              onClick={this.onSubmit}>
-              Submit
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            onClick={this.onSubmit}
+          >
+            Submit
           </button>
         </form>
       </div>
-        );
-      }
-    }
+    );
+  }
+}
