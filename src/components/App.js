@@ -1,10 +1,8 @@
 import React from "react";
 import countries from "../data/countries";
-
 // "Must be 5 characters or more"
 // "Required"
 // "Must be equal password"
-
 export default class App extends React.Component {
   constructor() {
     super();
@@ -16,14 +14,15 @@ export default class App extends React.Component {
       gender: "male",
       agree: true,
       avatar: "",
+      age: 16,
       errors: {
         username: false,
         password: false,
-        repeatPassword: false
+        repeatPassword: false,
+        age: false
       }
     };
   }
-
   onChange = event => {
     this.setState({
       [event.target.name]: event.target.value
@@ -50,20 +49,16 @@ export default class App extends React.Component {
   onSubmit = event => {
     event.preventDefault();
     // console.log("refs", this.username.value, this.password.value);
-    console.log("submit", this.state);
     const errors = {};
     if (this.state.username.length < 5) {
       errors.username = "Must be 5 characters or more";
     }
-
     if (this.state.password < 3) {
       errors.password = "Must be 3 characters or more";
     }
-
     if (this.state.password !== this.state.repeatPassword) {
       errors.repeatPassword = "Must be equal password";
     }
-
     if (Object.keys(errors).length > 0) {
       // error
       this.setState({
@@ -76,7 +71,6 @@ export default class App extends React.Component {
       console.log("submit", this.state);
     }
   };
-
   getOptionsItems = items => {
     return items.map(item => (
       <option key={item.id} value={item.id}>
@@ -84,14 +78,57 @@ export default class App extends React.Component {
       </option>
     ));
   };
+
+  incrementAge = () => {
+    this.setState(
+      (prevState, prevProps) => ({
+        age: prevState.age + 1
+      }),
+      () => {
+        console.log("callback", this.state.age);
+        this.setState({
+          errors: {
+            age: this.state.age > 18 ? false : "Must be more 18"
+          }
+        });
+      }
+    );
+
+    // this.setState((prevState, prevProps) => ({
+    //   age: prevState.age + 1
+    // }));
+    // console.log("incrementAge", this.state.age);
+    // this.setState((prevState, prevProps) => ({
+    //   age: prevState.age + 1
+    // }));
+  };
+
+  decrementAge = () => {
+    this.setState(
+      {
+        age: this.state.age - 1
+      },
+      () => {
+        console.log("callback", this.state.age);
+        this.setState({
+          errors: {
+            age: this.state.age > 18 ? false : "Must be more 18"
+          }
+        });
+      }
+    );
+  };
+
   render() {
     // console.log(this);
+
     // const getOptionsCountries = countries.map(country => (
     //   <option key={country.id} value={country.id}>
     //     {country.name}
     //   </option>
     // ));
     // console.log("getOptionsCountries", getOptionsCountries);
+    console.log("render", this.state.age);
     return (
       <div className="form-container card">
         <form className="form card-body">
@@ -198,6 +235,38 @@ export default class App extends React.Component {
               name="avatar"
               onChange={this.onChangeAvatar}
             />
+          </div>
+          <div className="form-group">
+            <div>
+              <label>Age</label>
+            </div>
+            <div className="btn-group">
+              <button
+                className="btn btn-secondary"
+                type="button"
+                onClick={this.decrementAge}
+              >
+                -
+              </button>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Enter age"
+                name="age"
+                value={this.state.age}
+                onChange={this.onChange}
+              />
+              <button
+                className="btn btn-secondary"
+                type="button"
+                onClick={this.incrementAge}
+              >
+                +
+              </button>
+            </div>
+            {this.state.errors.age ? (
+              <div className="invalid-feedback">{this.state.errors.age}</div>
+            ) : null}
           </div>
           <div className="form-check mb-2">
             <input
