@@ -1,11 +1,13 @@
 import React from "react";
 import countries from "../data/countries";
+import Field from "./Field";
 // "Must be 5 characters or more"
 // "Required"
 // "Must be equal password"
 export default class App extends React.Component {
   constructor() {
     super();
+
     this.state = {
       username: "",
       password: "",
@@ -128,44 +130,32 @@ export default class App extends React.Component {
     //   </option>
     // ));
     // console.log("getOptionsCountries", getOptionsCountries);
-    console.log("render", this.state.age);
+    
     return (
-      <div className="form-container card">
-        <form className="form card-body">
-          <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter username"
-              ref={node => (this.username = node)}
-              name="username"
-              value={this.state.username}
-              onChange={this.onChange}
-            />
-            {this.state.errors.username ? (
-              <div className="invalid-feedback">
-                {this.state.errors.username}
-              </div>
-            ) : null}
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter password"
-              ref={node => (this.password = node)}
-              name="password"
-              value={this.state.password}
-              onChange={this.onChange}
-            />
-            {this.state.errors.password ? (
-              <div className="invalid-feedback">
-                {this.state.errors.password}
-              </div>
-            ) : null}
-          </div>
+    <div className="form-container card">
+      
+    <form className="form card-body">
+      
+    <Field
+            id="username"
+            labelText="Username"
+            type="text"
+            placeholder="Enter username"
+            name="username"
+            value={this.state.username}
+            onChange={this.onChange}
+            error={this.state.errors.username}
+          />
+          <Field
+            id="password"
+            labelText="Password"
+            type="password"
+            placeholder="Enter password"
+            name="password"
+            value={this.state.password}
+            onChange={this.onChange}
+            error={this.state.errors.password}
+          />
           <div className="form-group">
             <label>Repeat password</label>
             <input
@@ -182,7 +172,8 @@ export default class App extends React.Component {
                 {this.state.errors.repeatPassword}
               </div>
             ) : null}
-          </div>
+</div>
+           
           <div className="form-group">
             <label htmlFor="country">Country</label>
             <select
